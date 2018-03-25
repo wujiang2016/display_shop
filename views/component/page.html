@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="/public/css/pagination.css">
+<div class="hd-pagination">
+  <div class="hd-pagination-top"></div>
+  <ul class="hd-pagination-ul">
+    <!-- 0 -->
+    <li class="prev"><a href="javascript:;" class="disabled">上一页</a></li>
+    <!-- 1 -->
+    <li class="prev" style="display: none;">...</li>
+    <!-- 2 -->
+    <li>
+      <a href="javascript:void(0);" style="display: none;">1</a>
+    </li>
+    <!-- 3 -->
+    <li>
+      <span class="hd-pagination-selected">1</span>
+    </li>
+    <!-- 4 -->
+    <li>
+      {%if totalPage>1%}
+      <a href="javascript:void(0);">2</a>
+      {%else%}
+      <a href="javascript:void(0);" style="display: none;">2</a>
+      {%endif%}
+    </li>
+    <!-- 5 -->
+    {%if totalPage>2%}
+    <li class="next">...</li>
+    {%else%}
+    <li class="next" style="display: none;">...</li>
+    {%endif%}
+    
+    <!-- 6 -->
+    {%if totalPage>1%}
+    <li class="next"><a href="javascript:void(0);">下一页</a></li>
+    {%else%}
+    <li class="next disabled"><a href="javascript:void(0);">下一页</a></li>
+    {%endif%}
+    <li><p>共 <span class="totalpage">{{totalPage}}</span> 页</p></li>
+    <li>
+      <p>转到第</p>
+      <div class="hd-pagination-jump">
+        <input id="pageJumpNum_" class="hd-pagination-jump-text" type="text" value="1"> <span>页</span>
+        <button id="pageJumpBtn_" class="hd-pagination-jump-button">确定</button>
+      </div>
+    </li>
+    <script>
+    $(function() {
+      
+    });
+    </script>
+  </ul>
+</div>

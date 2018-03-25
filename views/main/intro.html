@@ -1,0 +1,239 @@
+{%extends 'main.html'%}
+{%block mainContent%}
+<link rel="stylesheet" href="/public/css/login.css">
+<style>
+  .code_img {
+    background: green;
+    font-family: Arial;
+    font-style: italic;
+    color: blue;
+    font-size: 24px;
+    border: 0;
+    padding: 2px 3px;
+    letter-spacing: 3px;
+    font-weight: bolder;
+    float: left;
+    cursor: pointer;
+    width: 150px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    vertical-align: middle;
+}
+body{background:#ffffff;}
+</style>
+<h1 style="text-align: center;">{{title}}</h1>
+<div style="width: 80%;margin: 30px auto 20px;font-size: 16px;">{% autoescape %}{{content}}{% endautoescape %}</div>
+
+<script src="/public/js/jquery.validate.min.js"></script>
+<script src="/public/js/jquery.form.js"></script>
+<script>
+  $(function(){
+    getImg();
+  });
+
+  function getImg() {
+    code = "";
+    var codeLength = 4; //验证码的长度
+    var checkCode = document.getElementById("code_img");
+    var codeChars = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'); //所有候选组成验证码的字符，当然也可以用中文的
+    for(var i = 0; i < codeLength; i++){
+      var charNum = Math.floor(Math.random() * 52);
+      code += codeChars[charNum];
+    }
+    if(checkCode){
+      checkCode.innerHTML = code;
+    }
+  }
+
+  function validateCode() {
+     var vCodeEle=document.getElementById("inputCode")
+     var inputCode=vCodeEle.value;
+     if(!inputCode) {
+        vCodeEle.focus()
+        vCodeEle.blur()
+        return false
+     } else if(inputCode.toUpperCase() != code.toUpperCase()) {
+        $('#inputCode-error').show().html('<i class="fa fa-times-circle-o"></i> 验证码不正确')
+        return false
+     }
+     return true 
+  }
+  
+var countryCode = $("#country_code").val();
+    $.validator.addMethod('mobAse',function (value, ele) {
+        return this.optional(ele) || /^1\d{10}$/.test(value);
+    },'<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码');
+  
+  
+
+  $("#resetForm").validate({
+      debug: true,
+      errorClass: 'text-error',
+      onfocusout: function (element) {
+          $(element).valid();
+      },
+      submitHandler: function(form) {
+          var options = {
+            dataType : "json",
+            success : function(reply) {
+              console.log(reply);
+              switch(reply.code){
+                case 0:
+                  alert('密码重置成功！')
+                  window.location.href = '/login';
+                  break;
+                case 3:
+                  $('#mobile-error').show().html('<i class="fa fa-info-circle"></i> '+reply.message)
+                  break;
+                default:
+                  $('#verifyCode-error').show().html('<i class="fa fa-info-circle"></i> '+reply.message)
+                  break;
+              }
+            },
+            error : function(result) {
+            }
+          };
+          $('#resetForm').ajaxSubmit(options);
+      },
+      rules: {
+          mobile: {
+              required: true,
+              number: true,
+              mobAse: true
+          },
+          imgCode: {
+              required: true
+          },
+          verifyCode: {
+              required: true,
+          },
+          password: {
+              required: true,
+              minlength: 6,
+              maxlength:20
+          },
+          repassword: {
+              required: true,
+              equalTo: "#password"
+          },
+      },
+      messages: {
+          mobile: {
+              required: '<i class="fa fa-info-circle"></i> 请输入手机号码',
+              number: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码',
+              minlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码'
+          },
+          imgCode: {
+              required: '<i class="fa fa-info-circle"></i> 请输入验证码',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的验证码'
+          },
+          verifyCode: {
+              required: '<i class="fa fa-info-circle"></i> 请输入短信验证码',
+          },
+          password: {
+              required: '<i class="fa fa-info-circle"></i> 请输入密码',
+              minlength: '<i class="fa fa-times-circle-o"></i> 密码不能少于6位',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 密码不能超过20位'
+          },
+          repassword: {
+              required: '<i class="fa fa-info-circle"></i> 请再次输入密码',
+              equalTo: '<i class="fa fa-times-circle-o"></i> 两次密码输入不一致'
+          },
+      }
+  });
+</script>
+
+<style>
+#protocolModal  .modal-body p { 
+    margin: -20px 0 10px;
+    }
+.modal-dialog {
+    width: 900px;
+    margin: 30px auto;
+}
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+a:hover{
+  text-decoration: underline;
+}
+</style>
+
+<script>
+var interval = undefined;
+
+$(document).on('click', '#sendCodeBtn', function(e) {
+  var $this = $(this);  
+  var mobile = $('input[name=mobile]').val() ;
+  if (!mobile.toString().match(/^1\d{10}$/)) {
+    return;
+  }
+  if (validateCode()) {
+    var imgCode = $('input[name=imgCode]').val() ;
+    var sid = $("input[name=sid]").val();
+    $.post('/api/registerCode', {mobile: mobile}, function(reply) {
+      // $.fxc.drawMessages(reply);
+      console.log(reply);
+      $this.addClass('disabled');
+      if (0==reply.code) {
+        $this.html('<span id="timetick">60</span>秒后重新获取');
+        interval = window.setInterval(timetick, 1000);
+      } else {
+        $this.removeClass('disabled');
+      }
+    }, 'json');
+  }  
+});
+
+function timetick() {
+  var time = parseInt($('#timetick').text(), 10);
+  time--;
+  if (time <= 0) {
+     window.clearInterval(interval);
+     $('#sendCodeBtn').removeClass('disabled').html('发送至手机');
+     return;
+  }
+  $('#timetick').text(time);
+}
+
+
+</script>
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?def2fee9012cc2fe1bf81ed82b624f6b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71730646-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- <script type="text/javascript">
+var _py = _py || [];
+_py.push(['a', 'Gks..F5FRasCfvI3lIyUQow94s0']);
+_py.push(['domain','stats.ipinyou.com']);
+_py.push(['e','']);
+-function(d) {
+var s = d.createElement('script'),
+e = d.body.getElementsByTagName('script')[0]; e.parentNode.insertBefore(s, e),
+f = 'https:' == location.protocol;
+s.src = (f ? 'https' : 'http') + '://'+(f?'fm.ipinyou.com':'fm.p0y.cn')+'/j/adv.js';
+}(document);
+</script>
+<noscript><img src="//stats.ipinyou.com/adv.gif?a=Gks..F5FRasCfvI3lIyUQow94s0&e=" style="display:none;"/></noscript> -->
+
+{%endblock%}

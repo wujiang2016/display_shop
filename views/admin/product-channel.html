@@ -1,0 +1,305 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" href="lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>通关模式</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 通关模式 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<a style="margin-top: 10px;margin-left: 10px;" class="btn btn-primary radius" id="addChannel" href="#" title="增加渠道" onclick="return false;"><i class="Hui-iconfont">&#xe600;</i> 增加渠道</a>
+<a style="margin-top: 10px;" class="btn btn-primary radius" id="edit" href="#" title="编辑名称" onclick="return false;"><i class="Hui-iconfont">&#xe6df;</i> 编辑名称</a>
+<a style="margin-top: 10px;" id="remove" href="#" title="删除渠道" onclick="return false;" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 删除渠道</a>
+
+<table class="table">
+	<tr>
+		<td width="200" class="va-t">
+			<ul id="treeDemo" class="ztree"></ul>
+		</td>
+		<!-- <td class="va-t">
+			<iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=390px SRC="product-channel-add.html"></iframe>
+		</td> -->
+	</tr>
+</table>
+<div id="editChannel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header">
+				<h3 id="operateRemind" class="modal-title" style="text-align: center;">添加渠道</h3>
+				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<table>
+					<tr>
+						<td width="100">渠道名称：</td>
+						<td>
+							<input name="channelid" type="hidden">
+							<input name="channelname" type="text" class="input-text radius" placeholder="渠道名称">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="modifyChannel();">确定</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="deleteReminder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header">
+				<h3 class="modal-title" style="text-align: center;">删除提示</h3>
+				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<p id="reminder2" style="width:  80%;margin:  0 auto;">该渠道下的产品将会移动到其它渠道下，您可在产品管理中进行修改。<br>是否继续删除该渠道？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="modifyChannel();">确定</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+var setting = {
+	edit: {
+		enable: true,
+		showRemoveBtn: false,
+		showRenameBtn: false
+	},
+	view: {
+		dblClickExpand: false,
+		showLine: false,
+		selectedMulti: false
+	},
+	data: {
+		keep: {
+			parent:true,
+			leaf:true
+		},
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pId",
+			rootPId: ""
+		}
+	}
+};
+
+var log, className = "dark";
+		
+var code;
+function showCode(str) {
+	if (!code) code = $("#code");
+	code.empty();
+	code.append("<li>"+str+"</li>");
+}
+function showLog(str) {
+	if (!log) log = $("#log");
+	log.append("<li class='"+className+"'>"+str+"</li>");
+	if(log.children("li").length > 8) {
+		log.get(0).removeChild(log.children("li")[0]);
+	}
+}
+function getTime() {
+	var now= new Date(),
+	h=now.getHours(),
+	m=now.getMinutes(),
+	s=now.getSeconds(),
+	ms=now.getMilliseconds();
+	return (h+":"+m+":"+s+ " " +ms);
+}
+
+var newCount = 1;
+
+var zNodes =[
+	{ id:0, pId:null, name:"所有渠道",isParent:true, open:true}
+];
+var other;
+$.ajax({
+	url: '/admin/channel/get',
+	async: false,
+	success:function(data) {
+		console.log(data);
+		if (0==data.code) {
+			data.data.map(function(elem,index) {
+				var tmp={}
+				tmp.id=elem.id
+				tmp.pId=0
+				tmp.name=elem.channelname
+				if ('其它'==tmp.name) {
+					other=tmp
+				} else {
+					zNodes.push(tmp)
+				}
+			})
+		}
+	}
+});
+if (other) {
+	zNodes.push(other)
+}
+
+$(document).ready(function(){
+	var t = $("#treeDemo");
+	t = $.fn.zTree.init(t, setting, zNodes);
+	demoIframe = $("#testIframe");
+	var zTree = $.fn.zTree.getZTreeObj("tree");
+	$("#addChannel").bind("click", {operate:'add'}, precheck);
+	$("#edit").bind("click", {operate:'edit'}, precheck);
+	$("#remove").bind("click", {operate:'delete'}, precheck);
+});
+var nodes//所有选中的节点
+var selectNode//当前选中的节点
+var zTree//zTree对象
+var curOperate//当前操作动作，增删改
+// var delNodesId//要删除节点的id
+function precheck(e) {
+	zTree = $.fn.zTree.getZTreeObj("treeDemo")
+	nodes = zTree.getSelectedNodes()
+	selectNode = nodes[0];
+	if (selectNode) {
+		if ('其它'==selectNode.name) {
+			$.Huimodalalert('其它渠道不可动！',2000)
+			return;
+		}
+		curOperate=e.data.operate
+		if (('所有渠道'==selectNode.name)&&('add'!=curOperate)) {
+			$.Huimodalalert('所有渠道不可动！',2000)
+			return;
+		}
+		switch(curOperate){
+			case 'delete':
+				$('#deleteReminder').modal('show')
+				break;
+			case 'add':
+				$('#operateRemind').html('添加渠道')
+				// $('input[name="channelid"]').val('')
+				$('input[name="channelname"]').val('')
+				if ('所有渠道'==selectNode.name) {
+					$('#editChannel').modal('show')
+				} else {
+					$.Huimodalalert('请在所有渠道下添加新渠道！',2000)
+				}
+				break;
+			case 'edit':
+				$('#operateRemind').html('编辑渠道')
+				$('input[name="channelid"]').val(selectNode.id)
+				$('input[name="channelname"]').val(selectNode.name)
+				$('#editChannel').modal('show')
+				break;
+		}
+	} else {
+		$.Huimodalalert('请先选中一个节点',2000)
+	}
+}
+function getChildnodesId(node) {
+	var nodeId=[]
+	nodeId.push(node.id)
+	if (node.children) {
+		node.children.map(function(elem,index) {
+			nodeId=nodeId.concat(getChildnodesId(elem))
+		})
+	}
+	return nodeId;
+}
+function modifyChannel() {
+	if ('delete'==curOperate) {
+		var parentNode=selectNode.getParentNode()
+		var pChildLen=parentNode.children.length||0
+		$.ajax({
+			url: '/admin/channel/del',
+			type:'post',
+			data:{
+				delId:selectNode.id,
+			},
+			success:function(data) {
+				console.log(data);
+				$.Huimodalalert(data.message,2000)
+				if (0==data.code) {
+					zTree.removeNode(selectNode);
+				}
+			}
+		});
+		return;
+	}
+	var cateName=$('input[name="channelname"]').val()
+	if (!cateName) {
+		$.Huimodalalert('渠道名称不能为空！',2000)
+	}
+	if ('edit'==curOperate) {
+		$.ajax({
+			url: '/admin/channel/edit',
+			type:'post',
+			data:{
+				channelname:cateName,
+				id:selectNode.id
+			},
+			success:function(data) {
+				console.log(data);
+				$.Huimodalalert(data.message,2000)
+				if (0==data.code) {
+					selectNode.name=cateName
+					zTree.updateNode(selectNode);
+				}
+			}
+		});
+	} else {
+		$.ajax({
+			url: '/admin/channel/add',
+			type:'post',
+			data:{
+				channelname:cateName,
+			},
+			success:function(data) {
+				console.log(data);
+				$.Huimodalalert(data.message,2000)
+				if (0==data.code) {
+					// $("#delBrand").modal("hide")
+					selectNode.isParent=true
+					zTree.updateNode(selectNode);
+					var data=data.data
+					var newNode={
+						id:data.id,
+						pId:data.pid,
+						name:data.channelname,
+						isParent:false
+					}
+					zTree.addNodes(selectNode,newNode);
+				}
+			}
+		});
+	}
+	$('#editChannel').modal('hide')
+}
+</script>
+</body>
+</html>

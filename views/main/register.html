@@ -1,0 +1,522 @@
+{%extends 'main.html'%}
+{%block mainContent%}
+<link rel="stylesheet" href="/public/css/login.css">
+<style>
+  .code_img {
+    background: green;
+    font-family: Arial;
+    font-style: italic;
+    color: blue;
+    font-size: 24px;
+    border: 0;
+    padding: 2px 3px;
+    letter-spacing: 3px;
+    font-weight: bolder;
+    float: left;
+    cursor: pointer;
+    width: 150px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    vertical-align: middle;
+}
+</style>
+<div class="yun-register" style="background:#ececec;">
+  <div class="pr newer-tips ">
+    <div class="text-center" style="border-bottom:1px solid #bbb;margin:0 auto 4px; width:390px;">
+      <span style="display:inline-block;padding-bottom:20px;">注册账号</span>
+    </div>
+ </div>
+
+
+  <div class="account-form reg" style="position: relative;left:-20px;background:#ececec;">
+    <form class="form-horizontal cus-reg" autocomplete="off" action="/api/register" method="post" id="registerForm" novalidate="novalidate">
+      <input type="hidden" name="from" value="">
+      <input type="hidden" name="approach" value="6">
+      <input type="hidden" name="registSession" value="">
+      
+      <div class="form-group" style="word-wrap:break-word;">
+        <label class="control-label">姓名：</label>
+        
+          <div class="control-input">  
+          <input type="text" name="username" class="form-control  text-error" placeholder="请输入姓名" required="" aria-required="true" aria-invalid="true">
+          <label id="username-error" class="text-error" for="username" style="display: none;">
+            <i class="fa fa-info-circle"></i> 请输入姓名
+          </label>
+        </div>
+      </div>
+      <div class="form-group" style="word-wrap:break-word;">
+        <label class="control-label">身份证号：</label>
+        
+          <div class="control-input">  
+          <input type="text" name="ID" class="form-control  text-error" placeholder="请输入身份证号" required="" aria-required="true" aria-invalid="true">
+          <label id="ID-error" class="text-error" for="ID" style="display: none;">
+            <i class="fa fa-info-circle"></i> 请输入身份证号
+          </label>
+        </div>
+      </div>
+      <div class="form-group" style="word-wrap:break-word;">
+        <label class="control-label">手机号码：</label>
+        
+	        <div class="control-input">  
+          <input type="text" name="mobile" class="form-control  text-error" placeholder="请输入手机号码" required="" aria-required="true" aria-invalid="true">
+          <label id="mobile-error" class="text-error" for="mobile" style="display: none;">
+            <i class="fa fa-info-circle"></i> 请输入手机号码
+          </label>
+        </div>
+      </div>
+      
+      <!-- <script src="http://fm.p0y.cn/j/adv.js"></script> -->
+      <script>
+        $('[name="username"]').focus();
+      </script>
+
+      <div class="form-group">
+        <label class="control-label">验证码：</label>
+        <div class="control-input">
+          <input id="inputCode" type="text" name="imgCode" class="form-control identify" placeholder="验证码">
+          <label id="inputCode-error" class="text-error" for="inputCode" style="display: none;">
+            <i class="fa fa-info-circle"></i> 请输入验证码
+          </label>
+          <span id="code_img" class="code_img" style="border:1px #aaa solid ;margin-left:12px;width: 26%;display: inline-block;" onclick="getImg()"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">短信动态码：</label>
+        <div class="control-input">
+          <input type="text" name="verifyCode" class="form-control identify" placeholder="短信动态码">
+          <label id="verifyCode-error" class="text-error" for="verifyCode" style="display: none;"></label>
+          <button class="btn btn-primary btn-code" id="sendCodeBtn" type="button">免费获取</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">密码：</label>
+        <div class="control-input">
+          <input type="password" id="password" class="form-control" name="password" placeholder="请输入6-20位登录密码">
+        </div>
+      </div>
+      
+	      <div class="form-group">
+	        <label class="control-label">确认密码：</label>
+	        <div class="control-input">
+	          <input type="password" id="repassword" class="form-control" placeholder="请再次输入密码" name="repassword">
+	        </div>
+	        
+	      </div>
+
+      <div class="form-group">
+        <div class="offset-2 control-input">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="accepted"> 我已阅读并接受 
+              <label id="accepted-error" class="text-error" for="accepted" style="display: none;padding: 0;line-height: 26px;"><i class="fa fa-info-circle"></i> 注册用户需阅读接受协议</label>
+            </label>
+            <a href="#protocolModal" data-toggle="modal">《灏行用户注册协议》</a>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="offset-2 control-input">
+          <button type="sumbit" class="btn btn-block btn-account-n" id="regisiterNow">提交注册</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="offset-2 width-error">
+          <div id="messageBox"></div>
+        </div>
+      </div>
+    </form>
+    <input type="hidden" name="sid" value="k8msoidfhug97kw17ci0f7">
+  </div>
+</div>
+
+<script src="/public/js/jquery.validate.min.js"></script>
+<script src="/public/js/jquery.form.js"></script>
+<script>
+  $(function(){
+    getImg();
+  });
+
+  function getImg() {
+    code = "";
+    var codeLength = 4; //验证码的长度
+    var checkCode = document.getElementById("code_img");
+    var codeChars = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'); //所有候选组成验证码的字符，当然也可以用中文的
+    for(var i = 0; i < codeLength; i++){
+      var charNum = Math.floor(Math.random() * 52);
+      code += codeChars[charNum];
+    }
+    if(checkCode){
+      checkCode.innerHTML = code;
+    }
+  }
+
+  function validateCode() {
+     var vCodeEle=document.getElementById("inputCode")
+     var inputCode=vCodeEle.value;
+     if(!inputCode) {
+        vCodeEle.focus()
+        vCodeEle.blur()
+        return false
+     } else if(inputCode.toUpperCase() != code.toUpperCase()) {
+        $('#inputCode-error').show().html('<i class="fa fa-times-circle-o"></i> 验证码不正确')
+        return false
+     }
+     return true 
+  }
+  
+var countryCode = $("#country_code").val();
+	  $.validator.addMethod('mobAse',function (value, ele) {
+	      return this.optional(ele) || /^1\d{10}$/.test(value);
+	  },'<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码');
+  
+  
+
+  $("#registerForm").validate({
+      debug: true,
+      errorClass: 'text-error',
+      onfocusout: function (element) {
+          $(element).valid();
+      },
+      submitHandler: function(form) {
+          var options = {
+				    dataType : "json",
+				    success : function(reply) {
+              console.log(reply);
+              switch(reply.code){
+                case 0:
+                  window.location.href = '/';
+                  break;
+                case 3:
+                  $('#mobile-error').show().html('<i class="fa fa-info-circle"></i> '+reply.message)
+                  break;
+                default:
+                  $('#verifyCode-error').show().html('<i class="fa fa-info-circle"></i> '+reply.message)
+                  break;
+              }
+				    },
+				    error : function(result) {
+				    }
+				  };
+          $('#registerForm').ajaxSubmit(options);
+      },
+      rules: {
+          username: {
+              required: true
+          },
+          ID: {
+              required: true,
+          },
+          mobile: {
+              required: true,
+              number: true,
+              mobAse: true
+          },
+          imgCode: {
+              required: true
+          },
+          verifyCode: {
+              required: true,
+          },
+          password: {
+              required: true,
+              minlength: 6,
+              maxlength:20
+          },
+          repassword: {
+              required: true,
+              equalTo: "#password"
+          },
+          accepted: 'required'
+      },
+      messages: {
+          username: {
+              required: '<i class="fa fa-info-circle"></i> 请输入姓名'
+          },
+          ID: {
+              required: '<i class="fa fa-info-circle"></i> 请输入身份证号'
+          },
+          mobile: {
+              required: '<i class="fa fa-info-circle"></i> 请输入手机号码',
+              number: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码',
+              minlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的手机号码'
+          },
+          imgCode: {
+              required: '<i class="fa fa-info-circle"></i> 请输入验证码',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 请输入正确的验证码'
+          },
+          verifyCode: {
+              required: '<i class="fa fa-info-circle"></i> 请输入短信验证码',
+          },
+          password: {
+              required: '<i class="fa fa-info-circle"></i> 请输入密码',
+              minlength: '<i class="fa fa-times-circle-o"></i> 密码不能少于6位',
+              maxlength: '<i class="fa fa-times-circle-o"></i> 密码不能超过20位'
+          },
+          repassword: {
+              required: '<i class="fa fa-info-circle"></i> 请再次输入密码',
+              equalTo: '<i class="fa fa-times-circle-o"></i> 两次密码输入不一致'
+          },
+          accepted: '<i class="fa fa-info-circle"></i> 注册用户需阅读接受协议',
+      }
+  });
+</script>
+
+<style>
+#protocolModal  .modal-body p { 
+    margin: -20px 0 10px;
+    }
+.modal-dialog {
+    width: 900px;
+    margin: 30px auto;
+}
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+a:hover{
+	text-decoration: underline;
+}
+</style>
+
+<div id="protocolModal" class="modal fade" tabindex="-1" data-width="400" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title">灏行用户注册协议</h4>
+      </div>
+      <div class="modal-body">
+          <pre><p align="center">
+  	灏行用户服务协议</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	为使用灏行（以下简称“乙方”）所提供服务，注册用户（以下简称“甲方”）应当阅读并遵守《灏行用户服务协议》（以下简称“本协议”）。请甲方务必审慎阅读、充分理解各条款内容，特别是免除或者限制责任的条款、争议解决和法律适用条款。如注册用户对协议有任何疑问的，应向客服进行咨询。 当注册用户按照注册页面提示填写信息、阅读并同意本协议且勾选注册页面下方的“我已阅读并接收《灏行用户服务协议》”选项等全部注册程序后，即表示注册用户已充分阅读、理解并接受本协议的全部内容，并与灏行平台达成协议。否则甲方无权使用灏行提供的服务。 如果甲方未满18周岁，请在法定监护人的陪同下阅读本协议，并特别注意未成年人使用条款。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	一、协议的范围</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	1.1本协议是甲方与灏行之间关于用户使用灏行相关服务所订立的协议。“灏行”是指灏行公司及其相关服务可能存在的运营关联单位。“注册用户”是指使用灏行相关服务的使用人（以下简称“甲方”）。 1.2本协议项下的服务是指灏行向用户提供的包括但不限于“灏行分销平台”、“灏行APP”“灏行云仓”“灏行微商城”等产品及服务（以下简称“本服务”）。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	二、帐号与密码安全</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	2.1甲方在使用灏行的服务时可能需要注册一个帐号。关于甲方使用帐号的具体规则，请遵守协议。 2.2 灏行特别提醒甲方应妥善保管甲方的帐号和密码。当甲方使用完毕后，应安全退出。因甲方保管不善可能导致遭受盗号或密码失窃，责任由甲方自行承担。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	三、用户资料信息保护</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	3.1保护用户资料信息是灏行的一项基本原则。 3.2甲方在注册帐号或使用本服务的过程中，可能需要填写一些必要的信息。若国家法律法规有特殊规定的，甲方需要填写真实的认证信息。若甲方填写的信息不完整，则无法使用本服务或在使用过程中受到限制。 3.3一般情况下，甲方可随时浏览、修改自己提交的信息，但出于安全性和认证识别（如号码申诉服务）的考虑，甲方可能无法修改注册时提供的初始注册信息及其他验证信息。 3.4 &nbsp;灏行将运用各种安全技术和程序建立完善的管理制度来保护甲方的资料信息，以免遭受未经授权的访问、使用或披露。 3.5 &nbsp;灏行不会将甲方的资料信息转移或披露给任何非关联的第三方，除非： （1）相关法律法规或法院、政府机关要求； （2）为完成合并、分立、收购或资产转让而转移； （3）为提供甲方要求的服务所必需。 3.6 &nbsp;灏行非常重视对未成年人信息的保护。若甲方是18周岁以下的未成年人，在使用灏行的服务前，应事先取得甲方家长或法定监护人（以下简称"监护人"）的书面同意。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	四、使用本服务的方式</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	4.1除非甲方与灏行另有约定，甲方同意本服务仅为甲方个人非商业性质的使用。 4.2甲方应当通过灏行提供或认可的方式使用本服务。甲方依本协议条款所取得的权利不可转让。 4.3甲方不得使用未经灏行授权的插件、外挂或第三方工具对本协议项下的服务进行干扰、破坏、修改或施加其他影响。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	五、按现状提供服务</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	甲方理解并同意，灏行的服务是按照现有技术和条件所能达到的现状提供的。灏行会尽最大努力向甲方提供服务，确保服务的连贯性和安全性；但灏行不能随时预见和防范法律、技术以及其他风险，包括但不限于不可抗力、病毒、木马、黑客攻击、系统不稳定、第三方服务瑕疵、政府行为等原因可能导致的服务中断、数据丢失以及其他的损失和风险。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	六、自备设备</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	6.1甲方应当理解，甲方使用灏行的服务需自行准备与相关服务有关的终端设备（如电脑、调制解调器等装置），并承担所需的费用（如电话费、上网费等费用）。 6.2甲方理解并同意，甲方使用本服务时会耗用甲方的终端设备和带宽等资源。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	七、广告服务</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	7.1甲方同意灏行可以在提供服务的过程中自行或由第三方广告商向甲方发送广告、推广或宣传信息（包括商业与非商业信息），其方式和范围可不经甲方特别通知而变更。 7.2 &nbsp;灏行可能为甲方提供广告信息的功能，但任何时候甲方都不得以本协议未明确约定或灏行未书面许可的方式屏蔽、过滤广告信息。 7.3 &nbsp;灏行依照法律的规定对广告商履行相关义务，甲方应当自行判断广告信息的真实性并为自己的判断行为负责，除法律明确规定外，甲方因依该广告信息进行的交易或前述广告商提供的内容而遭受的损失或损害，灏行不承担责任。 7.4甲方同意，对灏行服务中出现的广告信息，甲方应审慎判断其真实性和可靠性，除法律明确规定外，甲方应对依该广告信息进行的交易负责。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	八、收费服务</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	8.1 &nbsp;灏行的部分服务是以收费方式提供的，如甲方使用收费服务，请遵守相关的协议。 8.2 &nbsp;灏行可能根据实际需要对收费服务的收费标准、方式进行修改和变更，灏行也可能会对部分免费服务开始收费。前述修改、变更或开始收费前，灏行将在相应服务页面进行通知或公告。如果甲方不同意上述修改、变更或付费内容，则应停止使用该服务。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	九、第三方提供的产品或服务</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	甲方在灏行平台上使用第三方提供的产品或服务时，除遵守本协议约定外，还应遵守第三方的用户协议。灏行和第三方对可能出现的纠纷在法律规定和约定的范围内各自承担责任。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十、用户违法行为</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	10.1甲方在使用本服务时须遵守法律法规，不得利用本服务从事违法违规行为，包括但不限于： （1）发布、传送、传播、储存危害国家安全统一、破坏社会稳定、违反公序良俗、侮辱、诽谤、淫秽、暴力以及任何违反国家法律法规的内容； （2）发布、传送、传播、储存侵害他人知识产权、商业秘密等合法权利的内容； （3）恶意虚构事实、隐瞒真相以误导、欺骗他人； （4）发布、传送、传播广告信息及垃圾信息； （5）其他法律法规禁止的行为。 10.2如果甲方违反了本条约定，相关国家机关或机构可能会对甲方提起诉讼、罚款或采取其他制裁措施，并要求灏行给予协助。造成损害的，甲方应依法予以赔偿，灏行不承担任何责任。 10.3如果灏行发现或收到他人举报甲方发布的信息违反本条约定，灏行有权进行独立判断并采取技术手段予以删除、屏蔽或断开链接。同时，灏行有权视用户的行为性质，采取包括但不限于暂停或终止服务，限制、冻结或终止灏行账号的使用，追究法律责任等措施。 10.4甲方违反本条约定，导致任何第三方损害的，甲方应当独立承担责任；灏行因此遭受损失的，甲方也应当一并赔偿。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十一、遵守当地法律监管</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	11.1甲方在使用本服务过程中应当遵守当地相关的法律法规，并尊重当地的道德和风俗习惯。如果甲方的行为违反了当地法律法规或道德风俗，甲方应当为此独立承担责任。 11.2甲方应避免因使用本服务而使灏行卷入政治和公共事件，否则灏行有权暂停或终止对甲方的服务。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十二、用户发送、传播的内容与第三方投诉处理</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	12.1甲方通过本服务发送或传播的内容（包括但不限于网页、文字、图片、音频、视频、图表等）均由甲方自行承担责任。 12.2甲方发送或传播的内容应有合法来源，相关内容为甲方所有或甲方已获得权利人的授权。 12.3甲方同意灏行可为履行本协议或提供本服务的目的而使用甲方发送或传播的内容。 12.4如果灏行收到权利人通知，主张甲方发送或传播的内容侵犯其相关权利的，甲方同意灏行有权进行独立判断并采取删除、屏蔽或断开链接等措施。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十三、不可抗力及其他免责事由</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	13.1甲方理解并同意，在使用本服务的过程中，可能会遇到不可抗力等风险因素，使本服务发生中断。不可抗力是指不能预见、不能克服并不能避免且对一方或双方造成重大影响的客观事件，包括但不限于自然灾害如洪水、地震、瘟疫流行和风暴等以及社会事件如战争、动乱、政府行为等。出现上述情况时，灏行将努力在第一时间与相关单位配合，及时进行修复，但是由此给甲方造成的损失灏行在法律允许的范围内免责。 13.2在法律允许的范围内，灏行对以下情形导致的服务中断或受阻不承担责任： （1）受到计算机病毒、木马或其他恶意程序、黑客攻击的破坏； （2）用户或灏行的电脑软件、系统、硬件和通信线路出现故障； （3）用户操作不当； （4）用户通过非灏行授权的方式使用本服务； （5）其他灏行无法控制或合理预见的情形。 13.3甲方理解并同意，在使用本服务的过程中，可能会遇到网络信息或其他用户行为带来的风险，灏行不对任何信息的真实性、适用性、合法性承担责任，也不对因侵权行为给甲方造成的损害负责。这些风险包括但不限于： （1）来自他人匿名或冒名的含有威胁、诽谤、令人反感或非法内容的信息； （2）因使用本协议项下的服务，遭受他人误导、欺骗或其他导致或可能导致的任何心理、生理上的伤害以及经济上的损失； （3）其他因网络信息或用户行为引起的风险。 13.4甲方理解并同意，本服务并非为某些特定目的而设计，包括但不限于核设施、军事用途、医疗设施、交通通讯等重要领域。如果因为软件或服务的原因导致上述操作失败而带来的人员伤亡、财产损失和环境破坏等，灏行不承担法律责任。 13.5灏行依据本协议约定获得处理违法违规内容的权利，该权利不构成灏行的义务或承诺，灏行不能保证及时发现违法行为或进行相应处理。 13.6在任何情况下，甲方不应轻信借款、索要密码或其他涉及财产的网络信息。涉及财产操作的，请一定先核实对方身份，并请经常留意灏行有关防范诈骗犯罪的提示。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十四、协议的生效与变更</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	14.1甲方使用灏行的服务即视为甲方已阅读本协议并接受本协议的约束。 14.2灏行有权在必要时修改本协议条款。甲方可以在相关服务页面查阅最新版本的协议条款。 14.3本协议条款变更后，如果甲方继续使用灏行提供的软件或服务，即视为甲方已接受修改后的协议。如果甲方不接受修改后的协议，应当停止使用灏行提供的软件或服务。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十五、服务的变更、中断、终止</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	15.1灏行可能会对服务内容进行变更，也可能会中断、中止或终止服务。 15.2甲方理解并同意，灏行有权自主决定经营策略。在灏行发生合并、分立、收购、资产转让时，灏行可向第三方转让本服务下相关资产；灏行也可在单方通知甲方后，将本协议下部分或全部服务转交由第三方运营或履行。具体受让主体以灏行通知的为准。 15.3如发生下列任何一种情形，灏行有权不经通知而中断或终止向甲方提供的服务： （1）根据法律规定甲方应提交真实信息，而甲方提供的信息资料不真实、或与注册时信息不一致又未能提供合理证明； （2）甲方违反相关法律法规或本协议的约定； （3）按照法律规定或主管部门的要求； （4）出于安全的原因或其他必要的情形。 15.4灏行有权按本协议8.2条的约定进行收费。若甲方未按时足额付费，灏行有权中断、中止或终止提供服务。 15.5甲方有责任自行备份存储在本服务中的数据。如果甲方的服务被终止，灏行可以从服务器上永久地删除甲方的数据,但法律法规另有规定的除外。服务终止后，灏行没有义务向甲方返还数据。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十六、管辖与法律适用</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	16.1本协议之效力、解释、变更、执行与争议解决均适用中华人民共和国法律，没有相关法律规定的，参照通用国际商业惯例和（或）行业惯例。 16.2你对本协议理解和认同，甲方即对本协议所有组成部分的内容理解并认同，一旦甲方使用本服务，你和乙方即受本协议所有组成部分的约束。 16.3本协议部分内容被有管辖权的法院认定为违法的，不因此影响其他内容的效力。 16.4因本协议产生之争议，均应依照中华人民共和国法律予以处理。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十七、未成年人使用条款</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	17.1若用户未满18周岁，则为未成年人，应在监护人监护、指导下阅读本协议和使用本服务。 17.2未成年人用户涉世未深，容易被网络虚象迷惑，且好奇心强，遇事缺乏随机应变的处理能力，很容易被别有用心的人利用而又缺乏自我保护能力。因此，未成年人用户在使用本服务时应注意以下事项，提高安全意识，加强自我保护： （1）认清网络世界与现实世界的区别，避免沉迷于网络，影响日常的学习生活； （2）填写个人资料时，加强个人保护意识，以免不良分子对个人生活造成骚扰； （3）在监护人或老师的指导下，学习正确使用网络； （4）避免陌生网友随意会面或参与联谊活动，以免不法分子有机可乘，危及自身安全。 17.3监护人、学校均应对未成年人使用本服务时多做引导。特别是家长应关心子女的成长，注意与子女的沟通，指导子女上网应该注意的安全问题，防患于未然。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	十八、其他</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	如果甲方对本协议或本服务有意见或建议，可与灏行客户服务部门联系，我们会给予甲方必要的帮助。</p>
+  <p>
+  	&nbsp;</p>
+  <p>
+  	（此处已为本协议底部）</p>
+  <p>
+  	&nbsp;</p>
+  </pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn default">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var interval = undefined;
+
+$(document).on('click', '#sendCodeBtn', function(e) {
+  var $this = $(this);  
+  var mobile = $('input[name=mobile]').val() ;
+  if (!mobile.toString().match(/^1\d{10}$/)) {
+    return;
+  }
+	if (validateCode()) {
+    var imgCode = $('input[name=imgCode]').val() ;
+    var sid = $("input[name=sid]").val();
+    $.post('/api/registerCode', {mobile: mobile}, function(reply) {
+      // $.fxc.drawMessages(reply);
+      console.log(reply);
+      $this.addClass('disabled');
+      if (0==reply.code) {
+        $this.html('<span id="timetick">60</span>秒后重新获取');
+        interval = window.setInterval(timetick, 1000);
+      } else {
+        $this.removeClass('disabled');
+      }
+    }, 'json');
+  }  
+});
+
+function timetick() {
+  var time = parseInt($('#timetick').text(), 10);
+  time--;
+  if (time <= 0) {
+     window.clearInterval(interval);
+     $('#sendCodeBtn').removeClass('disabled').html('发送至手机');
+     return;
+  }
+  $('#timetick').text(time);
+}
+
+
+</script>
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?def2fee9012cc2fe1bf81ed82b624f6b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71730646-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+{%endblock%}

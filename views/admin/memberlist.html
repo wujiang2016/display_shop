@@ -1,0 +1,337 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>会员列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 会员管理 <span class="c-gray en">&gt;</span> 会员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> 
+		<span class="l"><a href="javascript:;" onclick="active_del()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a></span>
+		<button name="" id="searchUser" class="btn btn-success r" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+		<input type="text" name="usertel" id="" placeholder=" 手机号" style="width:250px" class="input-text r">
+		<button name="" id="exportUser" class="btn btn-success r" >导出用户列表</button>
+	</div>
+	<div class="mt-20">
+		<table id="userTable" class="table table-border table-bordered table-bg">
+			<thead>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" name="" value=""></th>
+					<th>ID</th>
+					<th>手机号</th>
+					<th>是否是管理员</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="editUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header">
+				<h3 class="modal-title" style="text-align: center;">会员修改</h3>
+				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<table>
+					<tr>
+						<td width="100">手机号：</td>
+						<td>
+							<input name="userid" type="hidden">
+							<span id="usertel"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>是否是管理员：</td>
+						<td>
+							<div style="padding: 10px 0;" class="formControls col-xs-8 col-sm-9 skin-minimal">
+								<div class="radio-box">
+									<input name="isAdmin" value="1" type="radio" id="sex-1" checked>
+									<label for="sex-1">是</label>
+								</div>
+								<div class="radio-box">
+									<input type="radio" id="sex-2" value="0" name="isAdmin">
+									<label for="sex-2">否</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="editUser();">确定</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="delUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header">
+				<h3 class="modal-title" style="text-align: center;">删除用户</h3>
+				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<p id="reminder" style="text-align: center;">你确定要删除该用户吗？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="delUser();">确定</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+var currentPage=1;
+var delUserId;
+	function active_del(id) {
+		if (id) {
+			delUserId=[id];
+			$('#reminder').html('你确定要删除该用户吗？')
+		}else{
+			delUserId=[]
+			$('td>input:checked').map(function(index, elem) {
+				delUserId.push($(elem).parent().next('td').html())
+			})
+			$('#reminder').html('你确定要删除选中的用户吗？')
+		}
+		$("#delUser").modal("show")
+	}
+	// <table>
+	// 				<tr>
+	// 					<td width="100">手机号：</td>
+	// 					<td>
+	// 						<input name="userid" type="hidden">
+	// 						<span id="usertel"></span>
+	// 					</td>
+	// 				</tr>
+	// 				<tr>
+	// 					<td>是否是管理员：</td>
+	// 					<td>
+	// 						<div style="padding: 10px 0;" class="formControls col-xs-8 col-sm-9 skin-minimal">
+	// 							<div class="radio-box">
+	// 								<input name="isAdmin" value="1" type="radio" id="sex-1" checked>
+	// 								<label for="sex-1">是</label>
+	// 							</div>
+	// 							<div class="radio-box">
+	// 								<input type="radio" id="sex-2" value="0" name="isAdmin">
+	// 								<label for="sex-2">否</label>
+	// 							</div>
+	// 						</div>
+	// 					</td>
+	// 				</tr>
+	// 			</table>
+	var gp
+	function product_user_edit(obj) {
+		gp=$(obj).parent().parent()
+		$('input[name="userid"]').val(gp.find('td:eq(1)').html())
+		$('#usertel').html(gp.find('td:eq(2)').html())
+		if (('是'==gp.find('td:eq(3)').html())) {
+			$(".radio-box:eq(0)>.iradio-blue").addClass('checked').find('input').attr('checked', true);
+			$(".radio-box:eq(1)>.iradio-blue").removeClass('checked').find('input').removeAttr('checked');
+		} else {
+			$(".radio-box:eq(0)>.iradio-blue").removeClass('checked').find('input').removeAttr('checked');
+			$(".radio-box:eq(1)>.iradio-blue").addClass('checked').find('input').attr('checked', true);
+		}
+		$("#editUser").modal("show")
+	}
+	function editUser() {
+		// var usertel=$('#usertel').html()
+		$.post('/admin/user/edit', {
+			// usertel: usertel,
+			userid: $('input[name="userid"]').val(),
+			isAdmin: $('input[name="isAdmin"]:checked').val(),
+		}, function(data, textStatus, xhr) {
+			console.log(data);
+			$.Huimodalalert(data.message,1000)
+			if (0==data.code) {
+				$("#editUser").modal("hide")
+				setTimeout(()=>{
+					gp.find('td:eq(3)').html(parseInt(data.data)?'是':'否')
+				},1000);
+			}
+		});
+	}
+$.dataTablesSettings = {
+    "aLengthMenu": [10, 25, 50, 100],
+    // "iDisplayLength": 2,
+	"processing": true,
+	"serverSide": true,//服务器模式
+    "bServerSide": true,
+    searching: false,//是否显示搜索框
+    "sAjaxSource": "/admin/user/getlist",
+    "fnServerData" : function(sSource, aDataSet, fnCallback) {    
+        $.ajax({    
+            "dataType" : 'json',    
+            "type" : "POST",    
+            "url" : sSource,    
+            "data" : aDataSet,    
+            "success" : function(data) {
+            	console.log(data);
+            	currentPage=data.currentPage
+            	fnCallback(data)
+            }    
+        });    
+    },
+    //每页显示三条数据
+    // pageLength: 1,
+    // "lengthMenu": [[2,3,5,10, 25, 50, -1], [2,3,5,10, 25, 50, "All"]],
+    "columns": [{
+        "data": "NULL", //此列不绑定数据源，用来显示序号
+        "render": function(data, type, row, meta) {
+	            //渲染 把数据源中的标题和url组成超链接
+	            console.log(row);
+            return '<input name="" type="checkbox" value="">';
+        },
+        "targets": 0
+    },
+    {
+        "data": "_id",
+        "targets":1
+    },
+    {
+        "data": "tel",
+        "targets":2
+    },
+    {
+        "data": "isAdmin",
+        "render": function(data, type, row, meta) {
+            return row.isAdmin?'是':'否';
+        },
+        "targets":3
+    },
+    {
+        "data": "NULL",
+        "render": function(data, type, row, meta) {
+	            //渲染 把数据源中的标题和url组成超链接
+            return '<a style="text-decoration:none" onClick="product_user_edit(this)" href="javascript:;" title="编辑"> <i class="Hui-iconfont">&#xe6df;</i> </a> <a style="text-decoration:none" class="ml-5" onClick="active_del(\''+row._id+'\')" href="javascript:;" title="删除"> <i class="Hui-iconfont">&#xe6e2;</i> </a>';
+        },
+        "targets": 4
+    }],
+	// paging:false,
+	info:false,//不显示表格信息
+	// "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+	"ordering": false,//禁止排序
+	"bStateSave": true,//状态保存
+	"bFilter" : true,
+	"aoColumnDefs": [
+	  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+	  {"orderable":false,"aTargets":[0,1,2,3,4]}// 制定列不参与排序
+	],
+    "fnServerParams": function (aoData) {
+        aoData._rand = Math.random();
+    },
+    "fnDrawCallback": function () {
+
+    }
+}
+
+var t = $("#userTable").dataTable($.dataTablesSettings);
+
+$('#searchUser').click(function () {
+	searchname=$('input[name="usertel"]').val()
+	getDataByConditions()
+	console.log(111);
+});
+$('#exportUser').click(function () {
+	$.get('/admin/exportUser', function(data) {
+		// console.log(data);
+		if (0==data.code) {
+			window.location.href=data.data
+		} else {
+			$.Huimodalalert(data.message,2000)
+		}
+	});
+});
+//根据搜索和分类获取数据
+function getDataByConditions() {
+	//searchCategoryIds
+    //这里重新设置参数
+    $.dataTablesSettings.fnServerParams = function (aoData) {
+        aoData._rand = Math.random();
+        aoData.push(
+            { "name": "usertel", "value": searchname }
+        );
+    }
+    //搜索就是设置参数，然后销毁datatable重新再建一个
+    t.fnDestroy(false);
+    t = $("#userTable").dataTable($.dataTablesSettings);    
+	t.fnPageChange(0);//当前页刷新
+}
+
+
+function delUser() {
+	$.post('/admin/user/del', {
+		userid: delUserId,
+	}, function(data, textStatus, xhr) {
+		console.log(data);
+		$.Huimodalalert(data.message,1000)
+		if (0==data.code) {
+			$("#delUser").modal("hide")
+				console.log(t);
+			setTimeout(()=>{
+				console.log(t);
+				t.page(currentPage-1).draw()
+			},1000);
+		}
+	});
+}
+$('.skin-minimal input').iCheck({
+	checkboxClass: 'icheckbox-blue',
+	radioClass: 'iradio-blue',
+	increaseArea: '20%'
+});
+//前台添加序号
+// function addSerialNo(argument) {
+// 	// body...
+// 	t.on('order.dt search.dt',
+// 	function() {
+// 	    t.column(0).nodes().each(function(cell, i) {
+// 	        cell.innerHTML = '<input name="" type="checkbox" value="">';
+// 	    });
+// 	    t.column(4).nodes().each(function(cell, i) {
+// 	        cell.innerHTML = '<a style="text-decoration:none" onClick="product_user_edit(\'用户编辑\',\'codeing.html\',\'1\')" href="javascript:;" title="编辑"> <i class="Hui-iconfont">&#xe6df;</i> </a> <a style="text-decoration:none" class="ml-5" onClick="active_del(this,\'10001\')" href="javascript:;" title="删除"> <i class="Hui-iconfont">&#xe6e2;</i> </a>';
+// 	    });
+// 	}).draw();
+// }
+// addSerialNo()
+// //更换数据源（相同格式，但是数据内容不同）
+// $("#redraw").click(function() {
+//     var url = t.ajax.url("http://www.gbtags.com/gb/networks/uploads/a7bdea3c-feaf-4bb5-a3bd-f6184c19ec09/newData.txt");
+//     url.load();
+// });
+</script>
+</body>
+</html>

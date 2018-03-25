@@ -1,0 +1,179 @@
+{%extends 'main.html'%}
+{%block mainContent%}
+<link rel="stylesheet" href="/public/css/login.css">
+<link rel="stylesheet" href="/public/css/footer.css">
+<div class="yun-login">
+    <div class="container mw">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="yun-login-form">
+            <div class="login-h4">
+              <h4>账号登录</h4>
+            </div>
+            <div class="form-box">
+              <form id="loginForm" action="/api/login" method="post" data-remote="true" data-type="json" data-success="loginCallback">
+                <!-- <input type="hidden" id="loginFrom" name="from" value="http://store.seatent.com"> -->
+                <input type="hidden" id="loginRedirect" name="redirect" value="">
+              <!-- <input type="hidden" id="approach" name="approach" value="6"> -->
+                <div class="form-group">
+                  <label>账号：</label>
+                  <input type="text" class="form-control" name="tel" value="" placeholder="请输入手机号码">
+                  <span class="help-block" id="usernameError"></span>
+                </div>
+                <div class="form-group">
+                  <label>密码：</label>
+                  <input type="password" id="password" name="password" value="" class="form-control" placeholder="请输入登录密码">
+                  <span class="help-block" id="passwordError"></span>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="rememberMe"> 记住密码
+                  </label>
+                  <a href="/reset" class="forget-pass">忘记密码</a>
+                </div>
+                <button type="submit" class="btn btn-block btn-account-n" id="loginBtn">登录</button>
+                <div id="messageBox"></div>
+                
+                <p class="form-control-static">
+                  <a href="/register" style="color:#ff4200;text-decoration:underline;"><b>立即注册 </b>&gt;</a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="yunlg-bar">
+      <div class="container mw">
+        <div class="row">
+       
+          <div class="col-xs-12">
+            <div class="b">
+                    <img src="/public/img/fx_login_bg.jpg" height="500">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="/public/js/hm.js"></script>
+
+<script src="/public/js/html5shiv.min.js"></script>
+<script src="/public/js/respond.min.js"></script>
+<script src="/public/js/jquery.form.js"></script>
+<script src="/public/js/jquery.validate.min.js"></script>
+
+
+<script src="/public/js/nprogress.js"></script>
+<script src="/public/js/fx-common.js"></script>
+<script>
+$.ajaxSetup({cache:false});
+function getContextPath(){return ''};
+function getAppName(){return '中和供应链接口V1.0'};
+</script>
+   <script>
+$(function() {
+  $('#loginRedirect').val(document.referrer||'')
+  if($('#mainPage').length) {
+    window.location.href = getContextPath() + "/";
+  }
+  
+  $('input[name="username"]').focus();
+  
+  $(document).keydown(function(event){
+         if( event.which == 13){
+             if(!$('#password').val()){
+               return;
+             }
+             event.preventDefault();
+            $("#loginBtn").click()
+         }
+  });
+$(document).on('click','#scro li a', function(event) {
+    var $anchor = $(this);
+    window.location.href = "/" + $anchor.attr("href");
+    event.preventDefault();
+    return false;
+  });
+});
+function loginCallback(reply) {
+  if ($.fxc.hasErrors(reply)) {
+    $.fxc.drawMessages(reply);
+    return;
+  }
+  if (reply.data.redirect) {
+    window.location.href = reply.data.redirect;
+  } else {
+    window.location.href = '/';
+  }
+}
+if (localStorage.telphone) {
+  $('input[name="tel"]').val(localStorage.telphone)
+  $('input[name="password"]').val(localStorage.checkcode)
+  $('input[name="rememberMe"]').attr('checked', true)
+}
+$("#loginBtn").click(function(e) {
+  e.preventDefault();
+  var options = {
+    dataType : "json",
+    success : function(reply) {
+                console.log(reply);
+      if ($.fxc.hasErrors(reply)) {
+        $.fxc.drawMessages(reply);
+        return;
+      }
+      if ($('input[name="rememberMe"]').is(':checked')) {
+        localStorage.telphone=$('input[name="tel"]').val()
+        localStorage.checkcode=$('input[name="password"]').val()
+      }else{
+        localStorage.removeItem('telphone');
+        localStorage.removeItem('checkcode');
+      }
+      // console.log(reply.data.redirect);
+      // return
+      // if (reply.data.redirect) {
+      //   window.location.href = reply.data.redirect;
+      // } else {
+      window.location.href = '/';
+      // }
+    },
+    error : function(result) {
+    }
+  };
+  $('#loginForm').ajaxSubmit(options);
+});
+</script>
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?def2fee9012cc2fe1bf81ed82b624f6b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71730646-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<script type="text/javascript">
+var _py = _py || [];
+_py.push(['a', 'Gks..F5FRasCfvI3lIyUQow94s0']);
+_py.push(['domain','stats.ipinyou.com']);
+_py.push(['e','']);
+-function(d) {
+var s = d.createElement('script'),
+e = d.body.getElementsByTagName('script')[0]; e.parentNode.insertBefore(s, e),
+f = 'https:' == location.protocol;
+s.src = (f ? 'https' : 'http') + '://'+(f?'fm.ipinyou.com':'fm.p0y.cn')+'/j/adv.js';
+}(document);
+</script>
+<noscript><img src="//stats.ipinyou.com/adv.gif?a=Gks..F5FRasCfvI3lIyUQow94s0&e=" style="display:none;"/></noscript>
+
+{%endblock%}

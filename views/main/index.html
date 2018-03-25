@@ -1,0 +1,327 @@
+{%extends 'main.html'%}
+
+{%block inlineStyle%}
+<style>
+div {
+    display: block;
+}
+form {
+    display: block;
+    margin-top: 0em;
+}
+i, cite, em, var, address, dfn {
+    font-style: italic;
+}
+input:not([type]), input[type="email" i], input[type="number" i], input[type="password" i], input[type="tel" i], input[type="url" i], input[type="text" i] {
+    padding: 1px 0px;
+}
+
+input, textarea, select, button, meter, progress {
+    -webkit-writing-mode: horizontal-tb;
+}
+</style>
+{%endblock%}
+{%block style%}
+<link rel="stylesheet" href="/public/css/style.css">
+<link rel="stylesheet" href="/public/css/components.css">
+{%endblock%}
+{%block mainContent%}
+<link rel="stylesheet" href="/public/css/index_new.css">
+<div style="overflow: hidden;">
+    <div class="w layout">
+        <div class="hot-warp" style="width:1920px;margin: 0 0 0 -365px;">
+            <div id="carousellist" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                </div>
+            </div>
+        </div>
+        <style>
+            .hot-warp-loaded{
+                margin-top: 10px!important;
+            }
+            .page-header.navbar {
+                margin-bottom: 0;
+            }
+        </style>
+        <div class="row" id="sTop">
+            <div class="col-md-12">
+                <div class="wrap-fenxiao">
+                    <form class="form-inline m-bt0" id="searchForm" onsubmit="return false;" action="" method="get">
+                        <div class="market-ct">
+                            <div class="nav-crumb" style="display: none;">
+                                全部结果
+                                <span style="display: none;" class="fa fa-angle-right first"></span>
+                                <span class="filter-term" data-name="cat" style="display: none;">分类：<span>奶粉</span><i class="icon-close search-close"></i>
+                                </span>
+                                <span class="filter-term" data-name="brand" style="display: none;">品牌：<span>爱他美Aptamil</span><i class="icon-close search-close"></i>
+                                </span>
+                                <span style="display: none;" class="fa fa-angle-right second"></span>
+                                <span class="filter-keyword"></span>
+                                找到<span class="text-danger"></span>个商品
+                            </div>
+                            <div class="filter-box filter-box-inside" style="border: 1px solid #E4E4E4; margin-top: 10px;">
+                                <div class="dl classify-filter-box js-classify-filter-box classify-filter-large" style="">
+                                    <div class="filter-tit">分类</div>
+                                    <div class="dd" style="max-height: 66px;">
+                                        <a href="javascript:;" data-id="" class="catList active">全部</a>
+                                        {%for category in categoryInfo%}
+                                            <a href="javascript:;" data-id="{{category._id.toString()}}" class="catList">{{category.categoryname}}</a>
+                                        {%endfor%}
+                                    </div>
+                                    <div class="classify-filter-more js-classify-filter-more">
+                                        <span class="classify-filter-more-open">展开</span>
+                                        <span class="classify-filter-more-close">收起</span>
+                                    </div>
+                                </div>
+                                <div class="dl classify-filter-box js-classify-filter-box classify-filter-large" style="">
+                                    <div class="filter-tit">品牌</div>
+                                    <div class="dd" style="max-height: 66px;">
+                                        <a href="javascript:;" data-id="" data-name="" class="brandList active">全部</a>
+                                        {%for brand in brandInfo%}
+                                            <a href="javascript:;" data-id="{{brand._id.toString()}}" class="brandList">{{brand.brandname}}</a>
+                                        {%endfor%}
+                                    </div>
+                                    <div class="classify-filter-more js-classify-filter-more">
+                                        <span class="classify-filter-more-open">展开</span>
+                                        <span class="classify-filter-more-close">收起</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="market">
+                            <input type="hidden" id="marketSort" name="orderBy" value="">
+                            <input type="hidden" id="marketOrder" name="isDesc" value="false">
+                            <div class="market-short">
+                                <div class="btn-group">
+                                    <a href="javascript:;" data-sort="price2" class="market-sort-a btn btn-default" data-desc="true">价格 <i class="fa fa-angle-up" style="display: none;"></i></a>
+                                    <div class="form-control-box">
+                                        <input name="low" value="" type="number" placeholder="¥" class="form-control text-center input-xsmall">&nbsp;-&nbsp;<input type="number" name="high" value="" placeholder="¥" class="form-control text-center input-xsmall">
+                                        <button class="market-form-btn" id="priceSure">确定</button>
+                                    </div>
+                                    {%for channel in channelInfo%}
+                                        <label style="margin-left: 20px; font-size: 12px;">
+                                            <input type="checkbox" data-id="{{channel._id.toString()}}" name="trade_type" value="1" style="font-size: 12px; vertical-align: middle;"> {{channel.channelname}}
+                                        </label>
+                                    {%endfor%}
+                                </div>
+                                <div class="market-fenye">
+                                        <a class="arrow-left fa fa-angle-left disabled" href="javascript:;"></a>
+                                    <span class="cur">1</span> /
+                                    <span class="totalpage">{{totalPage}}</span>
+                                    {%if totalPage>1%}
+                                    <a class="arrow-right fa fa-angle-right" href="javascript:;"></a>
+                                    {%else%}
+                                    <a class="arrow-right fa fa-angle-right disabled" href="javascript:;"></a>
+                                    {%endif%}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="goods-list">
+<ul class="list-item clearfix" id="origin">
+    <!--  商品列表    -->
+    {%for p in productInfo%}
+    <li class="item" id="item6442" data-id="6442" data-accessable="false">
+        <div class="gds">
+            <a target="_blank" class="g-img" style="line-height: 212px;">
+                <img src="{{p.picture}}">
+            </a>
+        </div>
+        <div class="gtit">
+            <a href="javascript:;">
+                <span>{{p.productname}}</span>
+            </a>
+        </div>
+        <div class="gds-lr">
+            {%if tel%}
+            <span class="md">
+                <span class="spc">价格</span>
+                <span class="goods-pt">¥{{p.species[0].price_low}}~{{p.species[0].price_high}}</span>
+            </span>
+            {%else%}
+            <div class="">
+                <a href="/login">登录后查看价格</a>
+            </div>
+            {%endif%}
+        </div>
+        <div class="more-detail">
+            <div class="gds-n">
+                <a target="_blank">{{p.productname}}</a>
+            </div>
+            <div class="spec-wrap">
+                <div class="s-lt" id="gspec6442">
+                    {%for s in p.species%}
+                    <a href="/goods/6442.html" target="_blank">          
+                        <div class="lt-item">
+                            <span class="attr-t">{{s.speci}}</span>
+                            {%if tel%}
+                            <a style="color: red;">¥{{s.price_low}}~{{s.price_high}}</a>
+                            {%else%}
+                            <a href="/login">登录后查看</a>
+                            {%endif%}
+                        </div>
+                    </a>
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
+    </li>
+    {%endfor%}
+</ul>
+<ul class="list-item clearfix" id="newer" style="display: none;">
+    <!--  商品列表    -->
+    {%for p in productInfo%}
+    <li class="item" id="item6442" data-id="6442" data-accessable="false">
+        <div class="gds">
+            <a target="_blank" class="g-img" style="line-height: 212px;">
+                <img src="{{p.picture}}">
+            </a>
+        </div>
+        <div class="gtit">
+            <a href="javascript:;">
+                <span>{{p.productname}}</span>
+            </a>
+        </div>
+        <div class="gds-lr">
+            {%if tel%}
+            <span class="md">
+                <span class="spc">价格</span>
+                <span class="goods-pt">¥{{p.species[0].price_low}}~{{p.species[0].price_high}}</span>
+            </span>
+            {%else%}
+            <div class="">
+                <a href="/login">登录后查看价格</a>
+            </div>
+            {%endif%}
+        </div>
+        <div class="more-detail">
+            <div class="gds-n">
+                <a target="_blank">{{p.productname}}</a>
+            </div>
+            <div class="spec-wrap">
+                <div class="s-lt" id="gspec6442">
+                    {%for s in p.species%}
+                    <a href="/goods/6442.html" target="_blank">          
+                        <div class="lt-item">
+                            <span class="attr-t">{{s.speci}}</span>
+                            {%if tel%}
+                            <a style="color: red;">¥{{s.price_low}}~{{s.price_high}}</a>
+                            {%else%}
+                            <a href="/login">登录后查看</a>
+                            {%endif%}
+                        </div>
+                    </a>
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
+    </li>
+    {%endfor%}
+</ul>
+                    </div>
+                    {%include '../component/page.html'%}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <div class="modal fade" tabindex="-1" role="dialog" id="centerAdv" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="position:absolute;left:50%;top:50%;margin-left: -400px;margin-top:-200px;width: 800px; height:400px;">
+      <div class="modal-content" style="border:none;-webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
+        <div class="modal-body" style="padding:0; position: relative;">
+          <a onclick="return false" href="javascript:;" data-dismiss="modal" aria-label="Close" style="position: absolute;width: 50px;height: 50px;font-size: 24px;line-height: 50px;right: 0;top: 0;text-align: center">
+            <i class="fa fa-close"></i>
+          </a>
+          <div class="main-adv" id="mainAdv">
+            <a href="#" target="_blank" style="display:block;">
+              <img src="" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- bottom -->
+<div class="hot-fixed" id="hot-fixed-bar" style="display:none;">
+    <div class="hot-wrap">
+      <span class="t-closed" onclick='$.cookie("bottomAdv",false,{path: "/"});$("#hot-fixed-bar").remove();'>
+        <img src="/public/img/round_close.png" width="32" height="32" />
+      </span>
+      <a class="t-tg" target="_blank" href="#">
+        <img src="" />
+      </a>
+    </div>
+</div>
+<!-- adv group end  -->
+<!-- <script src="/public/js/vue.js"></script> -->
+<script src="/public/js/index.js"></script>
+<script>
+
+</script>
+<script type="text/javascript" src="/public/js/mypop.js"></script>
+    <script type="text/javascript">
+      // adv.getAdvHtml(0);
+      $('#openModal').on('click', function(){
+        $('#myModal').modal('show');
+        $('.hot118-hb').hide();
+      });
+      $('#myModal').on('hidden.bs.modal', function (e) {
+        $('.hot118-hb').show();
+      });
+    </script>
+
+  
+   <script>
+    var timeTrick, $_this;
+    $(".list-item li").hover(function () {
+        $_this = $(this);
+        var inited = $_this.data('inited');
+        if (inited) {
+            $_this.addClass("hover");
+            return;
+        }
+    }, function () {
+        $_this.removeClass("hover").siblings("li").removeClass("hover");
+    });
+
+
+
+    $('span.classify-filter-more-open').click(function(event) {
+        $(this).hide().next('span').show().parent().prev('div').css('max-height', 'none');
+    });
+    $('span.classify-filter-more-close').click(function(event) {
+        $(this).hide().prev('span').show().parent().prev('div').css('max-height', '66px');
+    });
+
+</script>
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?def2fee9012cc2fe1bf81ed82b624f6b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71730646-1', 'auto');
+  ga('send', 'pageview');
+  $('li.item').hover(function() {
+      $(this).addClass('hover')
+  }, function() {
+      $(this).removeClass('hover')
+  });
+</script>
+
+
+{%endblock%}

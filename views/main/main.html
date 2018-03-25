@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="Keywords" content="灏行商城--行业最全跨境产品" />
+<meta name="Description" content="灏行商城--行业最全跨境产品" />
+
+<title>灏行商城--行业最全跨境产品</title>
+    <!-- <link href="/assets/img/favicon.png" rel="shortcut icon"> -->
+
+{%block inlineStyle%}{%endblock%}
+<!-- Global css begin -->
+<link rel="stylesheet" href="/public/css/font-awesome.min.css">
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="/public/css/bootstrap-select.min.css"> -->
+<link rel="stylesheet" href="/public/css/bootstrap-fileinput.css">
+{%block style%}{%endblock%}
+<link rel="stylesheet" href="/public/css/cm.css">
+<link rel="stylesheet" href="/public/css/header_new.css?v=1.3.2">
+<!-- <link rel="stylesheet" href="/lib/css/layout.css?v=1.3.2"> -->
+<link rel="stylesheet" href="/public/css/dark.css">
+<link rel="stylesheet" href="/public/css/custom.css?v=1.3.2">
+<!-- Global css end -->
+
+
+
+<!--[if lt IE 9]>
+<script src="/public/js/html5shiv.min.js"></script>
+<script src="/public/js/respond.min.js"></script>
+<![endif]-->
+
+<!-- <script async="" src="//www.google-analytics.com/analytics.js"></script> -->
+<!-- <script src="//hm.baidu.com/hm.js?def2fee9012cc2fe1bf81ed82b624f6b"></script> -->
+<script src="/public/js/jquery.min.js"></script>
+<!-- <script src="/public/js/jquery-migrate.min.js"></script> -->
+<!-- <script src="/public/js/jquery-ujs.min.js"></script> -->
+<script src="/public/js/bootstrap.min.js"></script>
+<script src="/public/js/bootstrap-hover-dropdown.min.js"></script>
+<!-- <script src="/public/js/bootstrap-select.min.js"></script> -->
+<script src="/public/js/bootstrap-fileinput.js"></script>
+<!-- <script src="/public/js/jquery.cokie.min.js"></script> -->
+<!-- <script src="/public/js/base.js"></script> -->
+<!-- <script src="/public/js/fx-common.js"></script> -->
+<!-- <script src="/public/js/nprogress.js"></script> -->
+
+  <!--[if lte IE 9]>
+<script src="/public/js/placeholder.js?v=1.3.2"></script>
+  <![endif]-->
+
+<script>
+// $.ajaxSetup({cache:false});
+// function getContextPath(){return ''};
+// function getAppName(){return '海带V1.0'};
+</script>
+
+
+</head>
+<body>
+<div class="hd-t-m">
+    <div class="t-tbar-w clearfix">
+        <div class="hd-tbar-l">
+            <div class="hd-t-dbox">
+                <a href="/intro">公司介绍</a>
+            </div>
+            <div class="hd-t-dbox">
+                <div class="hd-tbar-n">
+                    <em class="tbar-ic fa fa-phone md"></em>
+                    <span>18616322817</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hd-tbar-r">
+    <div class="hd-t-b">
+        <a href="/" class="hd-tbar-n">
+            <span>灏行商城</span>
+        </a>
+    </div>
+    <span class="hd-tbar-n-sp">
+      欢迎来到灏行
+    </span>
+    <div class="hd-t-b hd-tbar-rg">
+        {%if username%}
+            <!-- <a href="/login" class="hd-tbar-n">登录</a> -->
+            <span class="hd-tbar-n">{{username}}</span>
+            <a href="javascript:logOut();" class="hd-tbar-n">注销</a>
+        {%else%}
+            <a href="/login" class="hd-tbar-n">登录</a>
+            <a href="/register" class="hd-tbar-n">注册</a>
+        {%endif%}
+        {%if admin%}
+            <a href="/admin" class="hd-tbar-n">管理后台</a>
+        {%endif%}
+    </div>
+            <!-- <b class="tl-split">:</b>
+            <div class="hd-t-b">
+                <a href="/order/cart" class="hd-tbar-n">
+                    <span class="pr">进货单 <b class="c-count" id="cartcount"></b></span>
+                </a>
+            </div> -->
+            <!-- <b class="tl-split">:</b> -->
+            <!-- <div class="hd-t-b dropdown"> -->
+                <!-- <a id="dLabel" class="hd-tbar-n" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">
+                    <span>关于澳安</span>
+                    <em class="tbar-ic fa fa-angle-down"></em>
+                </a> -->
+
+                <!-- <div class="dropdown-menu mypro hv" aria-labelledby="dLabel">
+                    <ul>
+                        <li>
+                            <a href="http://www.shanghaiaoan.com" target="_blank">澳安分销</a>
+                        </li>
+                        <li>
+                            <a href="http://depot.shanghaiaoan.com" target="_blank">澳安云仓</a>
+                        </li>
+                    </ul>
+                </div> -->
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<div class="hd-header mw">
+    <div class="hd-hdr-con">
+        <div class="hd-hdr-box">
+            <a href="/" target="_blank" class="hd-logo">
+                <img src="/public/img/logo_new_v21x.jpg" class="logo" style="height: 100px;position: relative;top: -30px;">
+            </a>
+        </div>
+        {%if navFlag%}
+        <div class="hd-search">
+            <div class="gds-search">
+                <i class="fa fa-search"></i>
+                <form class="search-form" id="searchForm" action="/search.html" method="get" onsubmit="return false;">
+                    <div class="sea-box box-c">
+                        <input type="text" name="keyword" id="keyword" value="" class="sea-keyword box-c" placeholder="请输入商品名称或品牌">
+                    </div>
+                    <input name="search" type="submit" class="hd-search-sub" value="搜索">
+                </form>
+            </div>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{%if navFlag%}
+<div class="hd-nav-list mw">
+    <div class="nav-wrapper">
+        <div class="w">
+            <ul class="nav-list-ul clearfix">
+                <li class="dropdown nav-classify-all">
+                    <a id="c-topcat" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">所有分类</a>
+                    <ul class="dropdown-menu" aria-labelledby="c-topcat">
+                        {%for category in categoryInfo%}
+                            <li><a href="javascript:;" data-id="{{category._id.toString()}}" class="catList">{{category.categoryname}}</a></li>
+                        {%endfor%}
+                    </ul>
+                </li>
+
+                <li class="active">
+                    <a  class="channel" href="/">首页</a>
+                </li>
+                {%for channel in channelInfo%}
+                    <li class="">
+                        <a href="javascript:void(0);" class="channel" data-id="{{channel._id.toString()}}">{{channel.channelname}}</a>
+                    </li>
+                {%endfor%}
+            </ul>
+        </div>
+    </div>
+</div>
+{%else%}
+<div class="hd-nav-list mw" style="height: 2px;background: #555;">
+  <div class="nav-wrapper">
+    <div class="w">
+    </div>
+  </div>
+</div>
+{%endif%}
+
+{%block mainContent%}{%endblock%}
+
+
+
+<div id="short-box">
+  <ul class="short-ul">
+    <!-- <li class="cart">
+        <a href="http://passport.shanghaiaoan.com?from=http://www.shanghaiaoan.com&amp;redirect=http://www.shanghaiaoan.com/order/cart&amp;approach=6">
+          <span class="short-bg">1</span>
+          <div class="cut-icon-t">进货单</div>
+          <span id="cartcount1" class="cart-tag"></span>
+        </a>
+    </li> -->
+    <li class="dh">
+      <a href="javascript:;">
+        <span class="short-bg">1</span>
+        <div class="cut-icon-t">服务热线</div>
+        <div class="phone">
+          <!-- <b style="display: block;line-height: 24px;margin-top: 6px;">021-31006637</b> -->
+          <b style="display: block;line-height: 24px;">18616322817</b>
+        </div>
+      </a>
+    </li>
+    <li class="qq">
+        <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=106746181&amp;site=haidai.seatent.com&amp;menu=yes" target="_blank">
+          <span class="short-bg">1</span>
+          <div class="cut-icon-t">在线QQ</div>
+        </a>
+    </li>
+    <li class="gz">
+      <a href="javascript:;">
+        <span class="short-bg">1</span>
+        <div class="cut-icon-t">关注我们</div>
+        <div class="ewm-short">
+            <img src="/public/img/erweima.jpg" height="120" width="120">
+        </div>
+      </a>
+    </li>
+    <li class="db">
+      <a onclick="$(window).scrollTop(0)" href="javascript:;">
+        <span class="short-bg">1</span>
+        <div class="cut-icon-t">返回顶部</div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+<div class="contact-us">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="link-list">
+             <div class="text-center">
+                {%if logoes%}
+                合作商：
+                {%for logo in logoes%}
+                <img style="max-width: 70px;max-height: 70px;vertical-align: middle;" src="{{logo.picture}}">
+                {%endfor%}
+                <br>
+                {%endif%}
+               上海灏行网络科技有限公司  版权所有<br>中国服务热线：18616322817<br>灏行具备：五证合一营业执照、食品流通许可证、机构信用代码证、对外贸易经营者备案登记、进出口企业资质<br><img src="http://www.seatent.com/assets/img/index/jianguan.png">    <img src="http://www.seatent.com/assets/img/index/hy_124x47.png">    <img src="http://www.seatent.com/assets/img/index/hangye_bottom_large.png">    <img src="http://www.seatent.com/assets/img/index/shiping.png"><br> <a href="http://www.miibeian.gov.cn" style="color: #9e9e9f;" target="_blank">沪ICP备17326597号-1</a>
+
+             </div>
+             <div class="text-center">
+               <!-- 技术支持：杭州诚淘 -->      
+             </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function logOut(argument) {//注销
+        $.get('/api/logout', function(data) {
+           window.location.reload()
+        });
+    }
+</script>
+
+</body>
+</html>

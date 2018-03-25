@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* 公用一般低部 */
+.contact-us {
+  display: block;
+  width: 100%;
+  min-width: 1190px;
+  padding: 30px 0;
+  background: #333;
+  margin-top: 0!important;
+}
+
+.contact-us .link-list p, .contact-us .link-list p a, .contact-us .link-list div, .contact-us .link-list div a{
+  color: #888;
+  font-size: 13px;
+}
+
+.link-list p, .link-list p a,.link-group a, .link-list div {
+  color: #888;
+}
+
+.link-group a:hover, .link-group a:focus {
+  text-decoration: none;
+}
+
+
+.link-group {
+  margin-top: 5px;
+  text-align: center;
+}

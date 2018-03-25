@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>合作商logo</title>
+<link rel="stylesheet" href="lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<style>
+	tr>td:nth-of-type(2){
+		padding: 0;
+	}
+</style>
+</head>
+<body class="pos-r">
+
+<div style="margin-left:200px;">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 公司信息 <span class="c-gray en">&gt;</span> 合作商logo <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<div class="page-container">
+		<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="logo_del()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a class="btn btn-primary radius" onclick="product_add('添加logo','logo-add.html')" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加logo</a></span>
+		</div>
+		<div class="mt-20">
+			<table id="brandTable" class="table table-border table-bordered table-bg table-hover">
+				<thead>
+					<tr class="text-c">
+						<th><input name="" type="checkbox" value=""></th>
+						<th>logo</th>
+						<th>合作商</th>
+						<th>描述</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+var searchname='',searchCategoryIds=[]
+
+
+/*产品-添加*/
+function product_add(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+/*产品-查看*/
+function product_show(title,url,id){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+/*产品-审核*/
+function product_shenhe(obj,id){
+	layer.confirm('审核文章？', {
+		btn: ['通过','不通过'], 
+		shade: false
+	},
+	function(){
+		$(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="product_start(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已发布</span>');
+		$(obj).remove();
+		layer.msg('已发布', {icon:6,time:1000});
+	},
+	function(){
+		$(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="product_shenqing(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
+		$(obj).parents("tr").find(".td-status").html('<span class="label label-danger radius">未通过</span>');
+		$(obj).remove();
+    	layer.msg('未通过', {icon:5,time:1000});
+	});	
+}
+
+/*产品-删除*/
+function logo_del(obj,id){
+	var delLogoId=[];
+	if (id) {
+		delLogoId.push(id);
+		var remindStr='确认要删除吗？'
+	} else {
+		$('td>input:checked').map(function(index, elem) {
+			delLogoId.push($(elem).attr('data-id'))
+		})
+		var remindStr='你确定要删除选中的产品吗？'
+	}
+	layer.confirm(remindStr,function(index){
+		$.post('/admin/logo/del', {
+			_id: delLogoId
+		}, function(data, textStatus, xhr) {
+			console.log(data);
+			if (0==data.code) {
+				if (id) {
+					$(obj).parents("tr").remove();
+					layer.msg('已删除!',{icon:1,time:1000});
+				} else {
+					window.location.reload()
+				}
+			} else {
+				layer.msg('更新数据失败，请稍后再试!',{icon: 5,time:1000});
+			}
+		});
+	});
+}
+
+/*产品-申请上线*/
+function product_shenqing(obj,id){
+	$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">待审核</span>');
+	$(obj).parents("tr").find(".td-manage").html("");
+	layer.msg('已提交申请，耐心等待审核!', {icon: 1,time:2000});
+}
+
+/*产品-编辑*/
+function product_edit(title,url,id){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url+'?_id='+id
+	});
+	layer.full(index);
+}
+
+var currentPage=1;
+
+$.dataTablesSettings = {
+    "aLengthMenu": [10, 25, 50, 100],
+    "bAutoWidth": false,
+    "bDeferRender": true,
+    "bLengthChange": true,
+    "sAjaxSource": "/admin/logo/getlist",
+    "fnServerData" : function(sSource, aDataSet, fnCallback) {    
+        $.ajax({    
+            "dataType" : 'json',    
+            "type" : "POST",    
+            "url" : sSource,    
+            "data" : aDataSet,    
+            "success" : function(data) {
+            	currentPage=data.currentPage
+            	fnCallback(data)
+            }    
+        });    
+    },
+    "bPaginate": true,
+    "bServerSide": true,
+    "iDisplayLength": 10,
+    searching: false,//是否显示搜索框
+    bSort: false,//是否显示搜索框
+    info: false,//是否显示页码详细信息
+    "bFilter": true,
+    "aoColumnDefs": [
+    	{
+	        "data": "NULL",
+	        "render": function(data, type, row, meta) {
+	            return '<input name="" type="checkbox" value="" data-id="'+row._id+'">';
+	        },
+	        "targets": 0
+	    },
+	    {
+	        "data": "NULL",
+	        "render": function(data, type, row, meta) {
+	            return '<img style="min-height:100px;max-height:100px;" src="'+row.picture+'">';
+	        },
+	        "targets":1
+	    },
+	    {
+	        "data": "partner",
+	        "targets":2
+	    },
+	    {
+	        "data": "desc",
+	        "targets":3
+	    },
+	    {
+	        "data": "NULL",
+	        "className":'td-manage',
+	        "render": function(data, type, row, meta) {
+	            return ' <a style="text-decoration:none" class="ml-5" onClick="product_edit(\'logo编辑\',\'logo-add.html\',\''+row._id+'\')" href="javascript:;" title="编辑"> <i class="Hui-iconfont">&#xe6df;</i> </a> <a style="text-decoration:none" class="ml-5" onClick="logo_del(this,\''+row._id+'\')" href="javascript:;" title="删除"> <i class="Hui-iconfont">&#xe6e2;</i> </a>';
+	        },
+	        "targets": 4
+    }],
+    "fnServerParams": function (aoData) {
+        aoData._rand = Math.random();
+    },
+    "fnDrawCallback": function () {
+
+    }
+
+}
+dataTable = $("#brandTable").dataTable($.dataTablesSettings);
+
+$('#searchProduct').click(function () {
+	searchname=$('input[name="productname"]').val()
+	getDataByConditions()
+});
+
+//根据搜索和分类获取数据
+function getDataByConditions(curPage) {
+	//searchCategoryIds
+    //这里重新设置参数
+    $.dataTablesSettings.fnServerParams = function (aoData) {
+        aoData._rand = Math.random();
+        aoData.push(
+            { "name": "productname", "value": searchname },
+            { "name": "categoryIds", "value": searchCategoryIds }
+        );
+    }
+    //搜索就是设置参数，然后销毁datatable重新再建一个
+    dataTable.fnDestroy(false);
+    dataTable = $("#brandTable").dataTable($.dataTablesSettings);    
+	dataTable.fnPageChange(0);//当前页刷新
+}
+
+
+// 子页面关闭时，父页面刷新
+window.addEventListener('message',handleMessage,false);
+function handleMessage(e) {
+	if ('reload'==e.data) {
+		dataTable.fnPageChange(currentPage-1);//当前页刷新
+	}
+}
+
+</script>
+</body>
+</html>
